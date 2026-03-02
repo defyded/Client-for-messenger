@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Client_For_Messenger.MainPage">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="10">
+
+            <Label Text="Enter email"
+           FontSize="24"
+           HorizontalOptions="Center"/>
+
+            <Entry x:Name="LoginTb"/>
+
+            <Label Text="Enter password"
+            FontSize="24"
+            HorizontalOptions="Center"/>
+
+            <Entry x:Name="PasswordTb"
+           Placeholder="..."/>
+
+            <Button Text="Send"
+            Clicked="OnSendClicked"
+                IsEnabled="{Binding ActiveBtn}"/>
+
+            <Label Text="{Binding Error}"
+                TextColor="Red"
+                IsVisible="{Binding VisibleError}"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
