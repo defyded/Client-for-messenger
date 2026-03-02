@@ -1,0 +1,26 @@
+# Build output
+**/bin/
+**/obj/
+**/Debug/
+**/Release/
+**/TestResults/
+**/artifacts/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
