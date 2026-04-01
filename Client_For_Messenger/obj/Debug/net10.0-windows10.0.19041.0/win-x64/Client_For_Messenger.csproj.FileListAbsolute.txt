@@ -516,3 +516,5 @@ C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\obj\Debug\
 C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\obj\Debug\net10.0-windows10.0.19041.0\win-x64\qualifiers.txt
 C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\obj\Debug\net10.0-windows10.0.19041.0\win-x64\qualifiers.txt.intermediate
 C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\obj\Debug\net10.0-windows10.0.19041.0\win-x64\MultipleQualifiersPerDimensionFound.txt
+C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Client_For_Messenger.sourcelink.json
+C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\bin\Debug\net10.0-windows10.0.19041.0\win-x64\CommunityToolkit.Mvvm.dll

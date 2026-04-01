@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:Client_For_Messenger.Models"
+             xmlns:vm="clr-namespace:Client_For_Messenger.ViewModels" 
+             x:Class="Client_For_Messenger.HomePage"
+             x:DataType="vm:HomeViewModel" 
+             Title="HomePage"
+             >
+    <Grid ColumnDefinitions="*" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+
+        
+        <Grid Grid.Column="0" 
+              VerticalOptions="FillAndExpand"
+              HorizontalOptions="Center" 
+              MaximumWidthRequest="500" 
+              WidthRequest="{OnPlatform WinUI=500, Android=-1}"
+              RowDefinitions="Auto, *">
+
+            <SearchBar Placeholder="Поиск чатов..." 
+                       Margin="15,10" 
+                       HeightRequest="45"
+                       BackgroundColor="Transparent"/>
+
+            <ActivityIndicator
+                 Grid.Row="1"
+                ZIndex="1"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                IsVisible="{Binding IsBusy}"
+                IsRunning="{Binding IsBusy}"
+                />
+            <Border Grid.Row="1"
+                    Margin="15,0,15,20"
+                    Padding="0"
+                    StrokeShape="RoundRectangle 12"
+                    StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}">
+
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,5" Radius="10" Opacity="0.1" />
+                </Border.Shadow>
+
+                <RefreshView IsRefreshing="{Binding IsRefreshing}" 
+                             Command="{Binding LoadChatsAsyncCommand}">
+
+                    <CollectionView ItemsSource="{Binding Chats}" 
+                                    SelectionMode="Single"
+                                    SelectionChanged="OnChatSelected">
+
+                        <CollectionView.EmptyView>
+                            <ContentView VerticalOptions="Center" HorizontalOptions="Center">
+                                <VerticalStackLayout Spacing="10" Padding="20">
+                                    <Label Text="💬" FontSize="40" HorizontalOptions="Center"/>
+                                    <Label Text="У вас пока нет чатов" 
+                                           FontSize="16" 
+                                           TextColor="Gray"
+                                           HorizontalOptions="Center" />
+                                </VerticalStackLayout>
+                            </ContentView>
+                        </CollectionView.EmptyView>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:ChatModel">
+                                <Grid Padding="15" ColumnDefinitions="Auto, *" ColumnSpacing="15">
+
+                                    <Border WidthRequest="50" 
+                                            HeightRequest="50" 
+                                            StrokeShape="RoundRectangle 25" 
+                                            BackgroundColor="#512BD4"
+                                            VerticalOptions="Center">
+                                        <Label Text="{Binding Initials}"
+                                               IsVisible="{Binding IsVisibleInitialFlag}"
+                                               HorizontalOptions="Center" 
+                                               VerticalOptions="Center" 
+                                               TextColor="White"
+                                               FontAttributes="Bold"/>
+                                        
+                                    </Border>
+                                    <Image
+                                        IsVisible="{Binding IsVisibleImageFlag}"
+                                        Source="{Binding AvatarURL}"/>
+                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                        <Label Text="{Binding CompanionUsername}" 
+                                               FontAttributes="Bold" 
+                                               FontSize="16"
+                                               TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
+
+                                        <Label Text="{Binding LastMessage.Content, FallbackValue='Начните общение...'}" 
+                                               MaxLines="1" 
+                                               FontSize="13" 
+                                               Opacity="0.6"
+                                               LineBreakMode="TailTruncation"
+                                               TextColor="{AppThemeBinding Light=#444, Dark=#BBB}"/>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </RefreshView>
+            </Border>
+        </Grid>
+    </Grid>
+</ContentPage>
