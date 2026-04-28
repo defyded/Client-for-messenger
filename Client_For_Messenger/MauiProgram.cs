@@ -40,7 +40,10 @@ namespace Client_For_Messenger
             builder.Services.AddSingleton<TokenStore>();
             builder.Services.AddSingleton<AuthService>();
             builder.Services.AddSingleton<ChatService>();
+            builder.Services.AddSingleton<ChatMessagesService>();
+            builder.Services.AddSingleton<UserService>();
 
+            builder.Services.AddTransient<ChatMessagesViewModel>();
             builder.Services.AddTransient<HomeViewModel>();
             builder.Services.AddTransient<HomePage>();
             builder.Services.AddTransient<LoginPage>();

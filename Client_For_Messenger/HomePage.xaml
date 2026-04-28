@@ -7,24 +7,64 @@
              x:DataType="vm:HomeViewModel" 
              Title="HomePage"
              >
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Выйти" Clicked="Logout" Order="Primary"/>
+    </ContentPage.ToolbarItems>
     <Grid ColumnDefinitions="*" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
 
-        
-        <Grid Grid.Column="0" 
+
+        <Grid 
+            Grid.Row="0"
+            Grid.Column="0" 
               VerticalOptions="FillAndExpand"
               HorizontalOptions="Center" 
               MaximumWidthRequest="500" 
               WidthRequest="{OnPlatform WinUI=500, Android=-1}"
               RowDefinitions="Auto, *">
+            <VerticalStackLayout
+                Padding="20,60,20,0"
+                ZIndex="10"
+                VerticalOptions="Start"
+                Grid.Row="0">
+                <SearchBar Placeholder="Поиск чатов..." 
+                   Margin="15,10" 
+                   HeightRequest="45"
+                   BackgroundColor="Transparent"
+                   TextChanged="SearchHandler"/>    
+            </VerticalStackLayout>
 
-            <SearchBar Placeholder="Поиск чатов..." 
-                       Margin="15,10" 
-                       HeightRequest="45"
-                       BackgroundColor="Transparent"/>
+            <Border 
+                Grid.Row="1"
+                ZIndex="2"
+                Margin="15,0,15,0"
+                VerticalOptions="Start" 
+                MaximumHeightRequest="400"
+                IsVisible="{Binding IsSearching}"
+                StrokeShape="RoundRectangle 12"
+                BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#2D2D2D}"
+                Stroke="Gray"
+                StrokeThickness="1">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,10" Radius="20" Opacity="0.3" />
+                </Border.Shadow>
+
+                <CollectionView ItemsSource="{Binding Users}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedUser}"
+                            SelectionChanged="OnChatCreated">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:UserModel">
+                            <Grid Padding="15" ColumnDefinitions="Auto, *" ColumnSpacing="15">
+                                <Ellipse WidthRequest="40" HeightRequest="40"/>
+                                    <Label Grid.Column="1" Text="{Binding Username}" VerticalOptions="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Border>
 
             <ActivityIndicator
-                 Grid.Row="1"
-                ZIndex="1"
+                ZIndex="3"
                 VerticalOptions="Center"
                 HorizontalOptions="Center"
                 IsVisible="{Binding IsBusy}"
@@ -35,7 +75,8 @@
                     Padding="0"
                     StrokeShape="RoundRectangle 12"
                     StrokeThickness="0"
-                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}">
+                    BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
+                    ZIndex="1">
 
                 <Border.Shadow>
                     <Shadow Brush="Black" Offset="0,5" Radius="10" Opacity="0.1" />
@@ -75,7 +116,7 @@
                                                VerticalOptions="Center" 
                                                TextColor="White"
                                                FontAttributes="Bold"/>
-                                        
+
                                     </Border>
                                     <Image
                                         IsVisible="{Binding IsVisibleImageFlag}"
@@ -99,6 +140,8 @@
                     </CollectionView>
                 </RefreshView>
             </Border>
+            
         </Grid>
     </Grid>
+    
 </ContentPage>

@@ -10,6 +10,7 @@ namespace Client_For_Messenger.Models
 {
     public class ChatModel
     {
+        public Guid Id { get; set; }
         public string CompanionUsername { get; set; }
         public string AvatarURL { get; set; }
         public ChatMessageDto LastMessage { get; set; }

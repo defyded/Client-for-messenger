@@ -42,7 +42,7 @@ namespace Client_For_Messenger
             try
             {
                 var token = await _tokenStore.GetAsync();
-                if (token is not null && TokenStore.IsValid(token))
+                if (token is not null)
                 {
                     await MainThread.InvokeOnMainThreadAsync(() =>
                     {

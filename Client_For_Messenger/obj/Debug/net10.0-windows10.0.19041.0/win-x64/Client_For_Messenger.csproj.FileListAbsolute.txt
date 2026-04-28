@@ -518,3 +518,11 @@ C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\obj\Debug\
 C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\obj\Debug\net10.0-windows10.0.19041.0\win-x64\MultipleQualifiersPerDimensionFound.txt
 C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\obj\Debug\net10.0-windows10.0.19041.0\win-x64\Client_For_Messenger.sourcelink.json
 C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\bin\Debug\net10.0-windows10.0.19041.0\win-x64\CommunityToolkit.Mvvm.dll
+C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Microsoft.AspNetCore.Connections.Abstractions.dll
+C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Microsoft.AspNetCore.Http.Connections.Client.dll
+C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Microsoft.AspNetCore.Http.Connections.Common.dll
+C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Microsoft.AspNetCore.SignalR.Client.dll
+C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Microsoft.AspNetCore.SignalR.Client.Core.dll
+C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Microsoft.AspNetCore.SignalR.Common.dll
+C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Microsoft.AspNetCore.SignalR.Protocols.Json.dll
+C:\Users\akou0\source\repos\Client_For_Messenger\Client_For_Messenger\bin\Debug\net10.0-windows10.0.19041.0\win-x64\Microsoft.Extensions.Features.dll

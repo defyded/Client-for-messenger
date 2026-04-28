@@ -51,12 +51,12 @@ namespace Client_For_Messenger.Services
             return Task.CompletedTask;
         }
 
-        public static bool IsValid(StoredToken token, TimeSpan? skew = null)
-        {
-            var buffer = skew ?? TimeSpan.FromMinutes(1);
-            File.AppendAllText(App.Path, $"ExpiredAt: {token.ExpiredAt}");
-            File.AppendAllText(App.Path, $"Now: {DateTimeOffset.UtcNow}");
-            return token.ExpiredAt > DateTimeOffset.UtcNow.Add(buffer);
-        }
+        //public static bool IsValid(StoredToken token, TimeSpan? skew = null)
+        //{
+        //    var buffer = skew ?? TimeSpan.FromMinutes(1);
+        //    File.AppendAllText(App.Path, $"ExpiredAt: {token.ExpiredAt}");
+        //    File.AppendAllText(App.Path, $"Now: {DateTimeOffset.UtcNow}");
+        //    return token.ExpiredAt > DateTimeOffset.UtcNow.Add(buffer);
+        //}
     }
 }

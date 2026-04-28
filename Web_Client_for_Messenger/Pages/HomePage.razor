@@ -1,0 +1,213 @@
+﻿@page "/chats"
+@using Client_For_Messenger.DTOs
+@using Client_For_Messenger.Services
+@using System.Threading
+@inject ChatService ChatService
+@inject UserService UserService
+@inject TokenStore TokenStore
+@inject NavigationManager Nav
+
+<style>
+    .chat-layout { display: flex; height: 100vh; overflow: hidden; background-color: #f0f2f5; }
+    .sidebar { width: 380px; border-right: 1px solid #e0e0e0; display: flex; flex-direction: column; background: white; }
+    .chat-content { flex: 1; display: flex; flex-direction: column; position: relative; }
+    .scroll-area { flex: 1; overflow-y: auto; }
+    .message-input { background: white; border-top: 1px solid #eee; }
+    .active-chat { background-color: #f0f2f5 !important; }
+</style>
+
+<div class="chat-layout">
+    <!-- Левая панель: Поиск и список чатов -->
+    <div class="sidebar">
+        <MudToolBar Dense="true" Class="py-2 px-4">
+            <MudText Typo="Typo.h6" Style="font-weight: bold;">Чаты</MudText>
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" OnClick="Logout" />
+        </MudToolBar>
+
+        <div class="px-4 pb-2">
+            <MudTextField T="string" 
+                          ValueChanged="@(async (s) => await SearchHandler(s))"
+                          Placeholder="Поиск людей..." 
+                          Variant="Variant.Outlined" 
+                          Margin="Margin.Dense"
+                          Adornment="Adornment.Start" 
+                          AdornmentIcon="@Icons.Material.Filled.Search"
+                          Immediate="true" />
+        </div>
+
+        <div class="scroll-area">
+            @if (isSearching)
+            {
+                <MudList T="UserDto">
+                    <MudListSubheader>Найдено пользователей</MudListSubheader>
+                    @foreach (var user in foundUsers)
+                    {
+                        <MudListItem OnClick="@(() => OnUserSelected(user))">
+                            <div class="d-flex align-center">
+                                <MudAvatar Color="Color.Secondary" Class="mr-3">@user.username[0].ToString().ToUpper()</MudAvatar>
+                                <MudText>@user.username</MudText>
+                            </div>
+                        </MudListItem>
+                    }
+                </MudList>
+            }
+            else
+            {
+                <MudList T="ChatDto" Clickable="true">
+                    @if (chats == null || !chats.Any())
+                    {
+                        <div class="pa-4 text-center">
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">Чатов пока нет</MudText>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var chat in chats)
+                        {
+                            <MudListItem OnClick="@(() => OnChatSelected(chat))" 
+                                         Class="@(selectedChat?.ChatId == chat.ChatId ? "active-chat" : "")">
+                                <div class="d-flex align-center">
+                                    <MudAvatar Color="Color.Primary" Class="mr-3">
+                                        @if (!string.IsNullOrEmpty(chat.AvatarURL)) { <MudImage Src="@chat.AvatarURL" /> }
+                                        else { @chat.Initials }
+                                    </MudAvatar>
+                                    <div style="flex: 1; overflow: hidden;">
+                                        <MudText Typo="Typo.body1" Style="font-weight: 500;">@chat.CompanionUsername</MudText>
+                                        <MudText Typo="Typo.caption" Color="Color.Secondary" Class="text-truncate d-block">
+                                            @chat.LastMessage?.Content
+                                        </MudText>
+                                    </div>
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                        @chat.LastMessage?.CreatedAt.ToString("HH:mm")
+                                    </MudText>
+                                </div>
+                            </MudListItem>
+                        }
+                    }
+                </MudList>
+            }
+        </div>
+    </div>
+
+    <!-- Правая панель: Окно чата -->
+    <div class="chat-content">
+        @if (selectedChat != null)
+        {
+            <MudAppBar Elevation="1" Color="Color.Surface" Dense="true" Fixed="false">
+                <MudAvatar Size="Size.Small" Color="Color.Primary" Class="mr-3">@selectedChat.Initials</MudAvatar>
+                <MudText Color="Color.Default"><b>@selectedChat.CompanionUsername</b></MudText>
+            </MudAppBar>
+
+            <div class="scroll-area pa-4">
+                @* Здесь будет вывод сообщений, когда добавишь MessageService *@
+                <div class="d-flex justify-center mt-10">
+                    <MudChip T="string" Color="Color.Info" Variant="Variant.Text">Начало переписки с @selectedChat.CompanionUsername</MudChip>
+                </div>
+            </div>
+
+            <div class="message-input pa-4">
+                <div class="d-flex align-center">
+                    <MudTextField @bind-Value="newMessage" 
+                                  Placeholder="Напишите сообщение..." 
+                                  Variant="Variant.Outlined" 
+                                  Margin="Margin.Dense"
+                                  OnKeyDown="@(e => { if(e.Key == "Enter") Send(); })" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Send" Color="Color.Primary" OnClick="Send" Class="ml-2" />
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="d-flex flex-column align-center justify-center h-100">
+                <MudIcon Icon="@Icons.Material.Filled.ChatBubbleOutline" Style="font-size: 5rem; color: #ccc;" />
+                <MudText Typo="Typo.h6" Color="Color.Secondary">Выберите чат для начала общения</MudText>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private List<ChatDto> chats = new();
+    private List<UserDto> foundUsers = new();
+    private ChatDto? selectedChat;
+    private string newMessage = "";
+    private bool isSearching = false;
+    private CancellationTokenSource _searchCts = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Проверка авторизации
+        var token = await TokenStore.GetAsync();
+        if (token == null)
+        {
+            Nav.NavigateTo("/");
+            return;
+        }
+
+        await LoadChats();
+    }
+
+    private async Task LoadChats()
+    {
+        try 
+        { 
+            chats = await ChatService.GetChatsAsync(); 
+        }
+        catch (Exception ex) 
+        { 
+            Console.WriteLine($"Ошибка: {ex.Message}"); 
+        }
+    }
+
+    private async Task SearchHandler(string query)
+    {
+        _searchCts.Cancel();
+        _searchCts = new CancellationTokenSource();
+        var token = _searchCts.Token;
+
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            isSearching = false;
+            foundUsers.Clear();
+            return;
+        }
+
+        try
+        {
+            await Task.Delay(500, token); // Debounce как в MAUI
+            isSearching = true;
+            var result = await UserService.SearchUsers(query);
+            foundUsers = result.Users;
+            StateHasChanged();
+        }
+        catch (OperationCanceledException) { }
+        catch (Exception ex) { Console.WriteLine(ex.Message); }
+    }
+
+    private void OnChatSelected(ChatDto chat)
+    {
+        selectedChat = chat;
+    }
+
+    private void OnUserSelected(UserDto user)
+    {
+        // Логика перехода к чату с новым пользователем
+        // Можно поискать в существующем списке чатов или создать новый
+        isSearching = false;
+        selectedChat = new ChatDto { CompanionUsername = user.username, CompanionId = user.userId };
+    }
+
+    private void Send()
+    {
+        if (string.IsNullOrWhiteSpace(newMessage)) return;
+        // Здесь вызов вашего метода отправки
+        newMessage = "";
+    }
+
+    private async Task Logout()
+    {
+        await TokenStore.ClearAsync();
+        Nav.NavigateTo("/");
+    }
+}

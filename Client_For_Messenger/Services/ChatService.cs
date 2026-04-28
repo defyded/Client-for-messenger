@@ -1,4 +1,5 @@
 ﻿using Client_For_Messenger.DTOs;
+using Client_For_Messenger.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -35,6 +36,20 @@ namespace Client_For_Messenger.Services
             {
                 throw new Exception($"Ошибка связи: {ex.Message}");
             }
+        }
+        public async Task<ChatDto> CreateChatAsync(Guid companionId)
+        {
+            var dto = new { CompanionId = companionId };
+            var response = await _apiService.RequestPost("api/chats", dto); 
+
+            if (response.IsSuccessStatusCode)
+            {
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                return await response.Content.ReadFromJsonAsync<ChatDto>(options);
+            }
+
+            var error = await response.Content.ReadAsStringAsync();
+            throw new ChatException("CAN_NOT_CREATE_CHAT", "can not create chat");
         }
     }
     public sealed class ChatException : Exception

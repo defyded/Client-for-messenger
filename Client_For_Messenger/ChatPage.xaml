@@ -1,12 +1,79 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:Client_For_Messenger.Models"
+             xmlns:vm="clr-namespace:Client_For_Messenger.ViewModels" 
              x:Class="Client_For_Messenger.ChatPage"
-             Title="ChatPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+             Title="ChatPage"
+             x:DataType="vm:ChatMessagesViewModel">
+    <Grid RowDefinitions="Auto, *, Auto" 
+      HorizontalOptions="Center" 
+      MaximumWidthRequest="500" 
+      Padding="15,10">
+
+        <HorizontalStackLayout Spacing="10" Margin="0,0,0,10">
+            <Border WidthRequest="40" HeightRequest="40" StrokeShape="RoundRectangle 20" BackgroundColor="#512BD4" />
+            <VerticalStackLayout VerticalOptions="Center">
+                <Label Text="{Binding CompanionName}" FontAttributes="Bold"/>
+                <Label Text="{Binding LastSeenStatus}" FontSize="12" TextColor="#512BD4"/>
+            </VerticalStackLayout>
+        </HorizontalStackLayout>
+
+        <Border Grid.Row="1" StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}">
+            <CollectionView ItemsSource="{Binding ChatMessages}" ItemsUpdatingScrollMode="KeepItemsInView" x:Name="MessageList">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:ChatMessagesModel">
+                        <Grid Padding="10,5">
+                            <Border Padding="10,5" StrokeShape="RoundRectangle 10" StrokeThickness="0">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="BackgroundColor" Value="#F0F0F0" />
+                                        <Setter Property="HorizontalOptions" Value="Start" />
+
+                                        <Style.Triggers>
+                                            <DataTrigger TargetType="Border" Binding="{Binding FlowDirection}" Value="End">
+                                                <Setter Property="BackgroundColor" Value="#512BD4" />
+                                                <Setter Property="HorizontalOptions" Value="End" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="{Binding Message}" 
+               MaximumWidthRequest="250" 
+               TextColor="{AppThemeBinding Light=Black, Dark=White}">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding FlowDirection}" Value="End">
+                                                <Setter Property="TextColor" Value="White" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+
+                                    <Label Text="{Binding SendAt}" 
+               FontSize="10" 
+               HorizontalOptions="End"
+               TextColor="{AppThemeBinding Light=Gray, Dark=#E0E0E0}">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding FlowDirection}" Value="End">
+                                                <Setter Property="TextColor" Value="#D1C4E9" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Border>
+
+        <Grid Grid.Row="2" ColumnDefinitions="*, Auto" ColumnSpacing="5" Margin="0,10,0,10">
+            <Border StrokeShape="RoundRectangle 20" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}">
+                <Editor Placeholder="Сообщение..." Text="{Binding NewMessageText, Mode=TwoWay}" AutoSize="TextChanges" Margin="10,0"/>
+            </Border>
+            <Button Grid.Column="1" Text="➜" Command="{Binding SendMessageCommand}" CornerRadius="20" WidthRequest="40" BackgroundColor="#512BD4" Clicked="Send"/>
+        </Grid>
+
+    </Grid>
 </ContentPage>

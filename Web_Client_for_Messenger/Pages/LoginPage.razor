@@ -1,0 +1,79 @@
+﻿@page "/"
+@using Client_For_Messenger.DTOs
+@using Client_For_Messenger.Services
+@inject AuthService Auth
+@inject NavigationManager Nav
+
+<style>
+    body { padding: 0 !important; margin: 0 !important; }
+
+    .login-wrapper {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+    }
+    .glass-card {
+        background: white !important;
+        border-radius: 16px !important;
+        width: 100%;
+        max-width: 400px;
+    }
+</style>
+
+<div class="login-wrapper">
+    <MudPaper Class="pa-10 glass-card" Elevation="10">
+        <MudStack Spacing="4">
+            <div class="text-center">
+                <MudIcon Icon="@Icons.Material.Filled.Chat" Color="Color.Primary" Style="font-size: 3rem;" />
+                <MudText Typo="Typo.h5" Style="font-weight: bold;">Messenger Login</MudText>
+            </div>
+
+            <MudTextField @bind-Value="email" Label="Email" Variant="Variant.Outlined" 
+                          Margin="Margin.Normal" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Email" />
+            
+            <MudTextField @bind-Value="password" Label="Password" Variant="Variant.Outlined" 
+                          InputType="InputType.Password" Margin="Margin.Normal"
+                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Lock" />
+
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <MudText Color="Color.Error" Typo="Typo.caption" Align="Align.Center">@error</MudText>
+            }
+
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" 
+                       Size="Size.Large" OnClick="OnLogin" Class="mt-2 py-3">
+                @if (_loading) { <MudProgressCircular Size="Size.Small" Indeterminate="true"/> }
+                else { <MudText>LOG IN</MudText> }
+            </MudButton>
+
+            <MudLink Typo="Typo.body2" Align="Align.Center" 
+                     OnClick="@(() => Nav.NavigateTo("/register"))" Style="cursor:pointer">
+                Create an account
+            </MudLink>
+        </MudStack>
+    </MudPaper>
+</div>
+
+@code {
+    private string email;
+    private string password;
+    private string error;
+    private bool _loading;
+
+    private async Task OnLogin()
+    {
+        _loading = true;
+        error = null;
+        var result = await Auth.LoginAsync(new LoginRequest(email, password));
+        if (result.IsSuccess) Nav.NavigateTo("/chats");
+        else error = result.ErrorMessage;
+        _loading = false;
+    }
+}

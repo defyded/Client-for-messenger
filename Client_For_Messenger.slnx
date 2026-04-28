@@ -1,3 +1,6 @@
 <Solution>
-  <Project Path="Client_For_Messenger/Client_For_Messenger.csproj" />
+  <Project Path="Client_For_Messenger/Client_For_Messenger.csproj">
+    <Deploy />
+  </Project>
+  <Project Path="Web_Client_for_Messenger/Web_Client_for_Messenger.csproj" Id="8cbf8e0c-2932-448e-9c73-165b5a48d60f" />
 </Solution>
